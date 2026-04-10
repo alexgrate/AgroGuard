@@ -168,3 +168,68 @@ cython_debug/
 
 
 # End of https://www.toptal.com/developers/gitignore/api/djangoemergency_audio/
+
+
+# 🔐 Environment variables
+.env
+.env.*
+!.env.example
+
+# 🐍 Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 🧪 Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# 📦 Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# 🗄️ Database
+db.sqlite3
+*.sqlite3
+
+# 📁 Static & media (optional depending on setup)
+staticfiles/
+media/
+
+# 📝 Logs
+*.log
+
+# 🔧 Django stuff
+*.pot
+*.mo
+
+# 🧠 IDE / Editor
+.vscode/
+.idea/
+
+# 🖥️ OS files
+.DS_Store
+Thumbs.db
+
+# 🔁 Celery / Redis
+celerybeat-schedule
+*.pid
+
+# 🧪 Coverage / testing
+htmlcov/
+.coverage
+.pytest_cache/
+
+# 🐳 Docker (if using)
+*.env.docker
+docker-compose.override.yml
+
+# 🔑 Secrets / keys
+*.pem
+*.key
+
+# 📦 Node (if you have frontend inside)
+node_modules/
