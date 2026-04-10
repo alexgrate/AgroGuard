@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authAPI, saveTokens } from "../../services/api";
 
 const features = [
   {
-    icon: "🌤", // use of generated Icons 
+    icon: "🌤",
     title: "Location-Based Weather",
     desc: "Real-time forecasts tailored to your farm's coordinates",
   },
@@ -45,8 +46,11 @@ function EyeIcon({ open }) {
 }
 
 export default function Register() {
+  const navigate = useNavigate();
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "",
     phone: "", password: "", confirm: "", terms: false,
@@ -55,11 +59,36 @@ export default function Register() {
   const set = (key) => (e) =>
     setForm((prev) => ({ ...prev, [key]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.confirm) return alert("Passwords do not match.");
-    // Connect your auth logic here
-    console.log(form);
+    setError("");
+
+    if (form.password !== form.confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await authAPI.register({
+        first_name:      form.firstName,
+        last_name:       form.lastName,
+        email:           form.email,
+        phone_number:    form.phone,
+        password:        form.password,
+        confirm_password: form.confirm,
+      });
+
+      // Save JWT tokens returned by the backend
+      saveTokens(data.tokens);
+
+      // Send user to location setup next
+      navigate("/location-setup");
+    } catch (err) {
+      setError(err.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,11 +132,21 @@ export default function Register() {
           box-shadow: 0 0 0 3px rgba(30,107,69,0.1);
         }
         .ag-input-pw { padding-right: 2.75rem; }
+        .ag-input-error { border-color: #dc2626 !important; }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         .fade-up { animation: fadeUp 0.42s ease both; }
+        .spinner {
+          width: 16px; height: 16px;
+          border: 2px solid rgba(255,255,255,0.35);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+          display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
 
       <div className="register-root flex" style={{ minHeight: "100vh" }}>
@@ -158,18 +197,16 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Footer */}
             <p className="text-white/35 text-xs flex items-center gap-1.5">
               <span>🔒</span> Secured by AgroGuard AI Technology
             </p>
           </div>
         </div>
 
-        {/* ── RIGHT PANEL── */}
+        {/* ── RIGHT PANEL ── */}
         <div className="flex-1 flex items-center justify-center px-8 py-12 sm:px-12" style={{ background: "#f9f6f0" }}>
           <div className="fade-up w-full" style={{ maxWidth: "460px" }}>
 
-            {/* Header */}
             <div className="mb-8">
               <h2 className="font-playfair font-bold mb-1" style={{ fontSize: "2rem", color: "#1a1a1a" }}>
                 Create your account
@@ -179,6 +216,14 @@ export default function Register() {
               </p>
             </div>
 
+            {/* API Error banner */}
+            {error && (
+              <div className="mb-5 px-4 py-3 rounded-xl text-sm font-medium"
+                style={{ background: "#fff3f3", border: "1.5px solid #fca5a5", color: "#dc2626" }}>
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
               {/* Name Row */}
@@ -187,27 +232,15 @@ export default function Register() {
                   <label className="block text-sm font-semibold mb-1.5" style={{ color: "#1a1a1a" }}>
                     First Name
                   </label>
-                  <input
-                    type="text"
-                    placeholder="John"
-                    value={form.firstName}
-                    onChange={set("firstName")}
-                    required
-                    className="ag-input"
-                  />
+                  <input type="text" placeholder="John" value={form.firstName}
+                    onChange={set("firstName")} required className="ag-input" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-1.5" style={{ color: "#1a1a1a" }}>
                     Last Name
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Doe"
-                    value={form.lastName}
-                    onChange={set("lastName")}
-                    required
-                    className="ag-input"
-                  />
+                  <input type="text" placeholder="Doe" value={form.lastName}
+                    onChange={set("lastName")} required className="ag-input" />
                 </div>
               </div>
 
@@ -216,14 +249,8 @@ export default function Register() {
                 <label className="block text-sm font-semibold mb-1.5" style={{ color: "#1a1a1a" }}>
                   Email Address
                 </label>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={form.email}
-                  onChange={set("email")}
-                  required
-                  className="ag-input"
-                />
+                <input type="email" placeholder="you@example.com" value={form.email}
+                  onChange={set("email")} required className="ag-input" />
               </div>
 
               {/* Phone */}
@@ -231,14 +258,8 @@ export default function Register() {
                 <label className="block text-sm font-semibold mb-1.5" style={{ color: "#1a1a1a" }}>
                   Phone Number
                 </label>
-                <input
-                  type="tel"
-                  placeholder="+234 800 000 0000"
-                  value={form.phone}
-                  onChange={set("phone")}
-                  required
-                  className="ag-input"
-                />
+                <input type="tel" placeholder="+234 800 000 0000" value={form.phone}
+                  onChange={set("phone")} required className="ag-input" />
               </div>
 
               {/* Password */}
@@ -247,15 +268,9 @@ export default function Register() {
                   Password
                 </label>
                 <div className="relative">
-                  <input
-                    type={showPw ? "text" : "password"}
-                    placeholder="Min. 8 characters"
-                    value={form.password}
-                    onChange={set("password")}
-                    minLength={8}
-                    required
-                    className="ag-input ag-input-pw"
-                  />
+                  <input type={showPw ? "text" : "password"} placeholder="Min. 8 characters"
+                    value={form.password} onChange={set("password")} minLength={8} required
+                    className="ag-input ag-input-pw" />
                   <button type="button" onClick={() => setShowPw(!showPw)}
                     className="absolute right-3 top-1/2 -translate-y-1/2"
                     style={{ color: "#9ca3af", background: "none", border: "none", cursor: "pointer", display: "flex" }}>
@@ -270,33 +285,25 @@ export default function Register() {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <input
-                    type={showConfirm ? "text" : "password"}
-                    placeholder="Repeat your password"
-                    value={form.confirm}
-                    onChange={set("confirm")}
-                    minLength={8}
-                    required
-                    className="ag-input ag-input-pw"
-                  />
+                  <input type={showConfirm ? "text" : "password"} placeholder="Repeat your password"
+                    value={form.confirm} onChange={set("confirm")} minLength={8} required
+                    className={`ag-input ag-input-pw ${form.confirm && form.confirm !== form.password ? "ag-input-error" : ""}`} />
                   <button type="button" onClick={() => setShowConfirm(!showConfirm)}
                     className="absolute right-3 top-1/2 -translate-y-1/2"
                     style={{ color: "#9ca3af", background: "none", border: "none", cursor: "pointer", display: "flex" }}>
                     <EyeIcon open={showConfirm} />
                   </button>
                 </div>
+                {/* Inline mismatch hint */}
+                {form.confirm && form.confirm !== form.password && (
+                  <p className="text-xs mt-1" style={{ color: "#dc2626" }}>Passwords do not match</p>
+                )}
               </div>
 
               {/* Terms */}
               <label className="flex items-start gap-2.5 cursor-pointer text-xs leading-relaxed" style={{ color: "#6b7280" }}>
-                <input
-                  type="checkbox"
-                  checked={form.terms}
-                  onChange={set("terms")}
-                  required
-                  className="mt-0.5 w-4 h-4 flex-shrink-0"
-                  style={{ accentColor: "#1e6b45" }}
-                />
+                <input type="checkbox" checked={form.terms} onChange={set("terms")} required
+                  className="mt-0.5 w-4 h-4 flex-shrink-0" style={{ accentColor: "#1e6b45" }} />
                 <span>
                   By creating an account you agree to AgroGuard AI's{" "}
                   <button type="button" className="font-semibold hover:underline"
@@ -311,12 +318,10 @@ export default function Register() {
               </label>
 
               {/* Submit */}
-              <button
-                type="submit"
-                className="w-full py-3.5 rounded-xl text-white text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 active:scale-[0.99] mt-1 cursor-pointer"
-                style={{ background: "#1e6b45", fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Create Account
+              <button type="submit" disabled={loading}
+                className="w-full py-3.5 rounded-xl text-white text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 active:scale-[0.99] mt-1 cursor-pointer flex items-center justify-center gap-2"
+                style={{ background: "#1e6b45", fontFamily: "'DM Sans', sans-serif", opacity: loading ? 0.75 : 1 }}>
+                {loading ? <><span className="spinner" /> Creating account…</> : "Create Account"}
               </button>
             </form>
 
@@ -334,7 +339,6 @@ export default function Register() {
               </Link>
             </p>
 
-            {/* Trust badges */}
             <div className="flex justify-center gap-5 mt-6 pt-5" style={{ borderTop: "1px solid #e0dbd0" }}>
               {[
                 { icon: "🔒", label: "Secure Signup" },

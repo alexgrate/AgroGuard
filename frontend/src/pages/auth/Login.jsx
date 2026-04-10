@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authAPI, saveTokens } from "../../services/api";
 
 function EyeIcon({ open }) {
   return (
@@ -7,7 +8,7 @@ function EyeIcon({ open }) {
       strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       {open ? (
         <>
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /> //made use of AI generated SVG Icons and custom Icons
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
           <circle cx="12" cy="12" r="3" />
         </>
       ) : (
@@ -22,21 +23,37 @@ function EyeIcon({ open }) {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Connectting auth logic 
-    console.log({ email, password, remember });
+    setError("");
+    setLoading(true);
+    try {
+      const data = await authAPI.login({ email, password });
+
+      // Save JWT tokens
+      saveTokens(data.tokens);
+
+      // Go straight to dashboard on login (location already set from registration)
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" //using google fonts 
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet"
       />
       <style>{`
@@ -78,6 +95,15 @@ export default function Login() {
           to   { opacity: 1; transform: translateY(0); }
         }
         .fade-up { animation: fadeUp 0.42s ease both; }
+        .spinner {
+          width: 16px; height: 16px;
+          border: 2px solid rgba(255,255,255,0.35);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+          display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
 
       <div className="login-root flex" style={{ minHeight: "100vh" }}>
@@ -109,22 +135,19 @@ export default function Login() {
                 <span style={{ color: "#f5a623" }}>Smart Farmer</span>
               </h2>
 
-              {/* Encouragement block */}
               <p className="text-white/70 text-base leading-relaxed mb-8" style={{ maxWidth: "380px" }}>
                 Every great harvest starts with the right information. Your fields are waiting — let's make today count.
               </p>
 
-              {/* Stat pills */}
               <div className="flex flex-col gap-4" style={{ maxWidth: "360px" }}>
                 {[
                   { value: "12,000+", label: "Nigerian farmers trust AgroGuard AI" },
-                  { value: "30%", label: "Average yield increase reported by users" },
-                  { value: "24 / 7", label: "Real-time alerts and personalized advice" },
+                  { value: "30%",     label: "Average yield increase reported by users" },
+                  { value: "24 / 7",  label: "Real-time alerts and personalized advice" },
                 ].map((s) => (
                   <div key={s.value} className="flex items-center gap-4 rounded-xl px-4 py-3"
                     style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}>
-                    <span className="font-playfair text-white font-bold text-xl flex-shrink-0"
-                      style={{ color: "#f5a623" }}>
+                    <span className="font-playfair font-bold text-xl flex-shrink-0" style={{ color: "#f5a623" }}>
                       {s.value}
                     </span>
                     <span className="text-white/60 text-xs leading-snug">{s.label}</span>
@@ -133,7 +156,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Footer */}
             <p className="text-white/35 text-xs flex items-center gap-1.5">
               <span>🔒</span> Secured by AgroGuard AI Technology
             </p>
@@ -153,6 +175,14 @@ export default function Login() {
               </p>
             </div>
 
+            {/* API Error banner */}
+            {error && (
+              <div className="mb-5 px-4 py-3 rounded-xl text-sm font-medium"
+                style={{ background: "#fff3f3", border: "1.5px solid #fca5a5", color: "#dc2626" }}>
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
               {/* Email */}
@@ -160,14 +190,8 @@ export default function Login() {
                 <label className="block text-sm font-semibold mb-1.5" style={{ color: "#1a1a1a" }}>
                   Email Address
                 </label>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="ag-input"
-                />
+                <input type="email" placeholder="you@example.com" value={email}
+                  onChange={(e) => setEmail(e.target.value)} required className="ag-input" />
               </div>
 
               {/* Password */}
@@ -176,20 +200,12 @@ export default function Login() {
                   Password
                 </label>
                 <div className="relative">
-                  <input
-                    type={showPw ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="ag-input ag-input-pw"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPw(!showPw)}
+                  <input type={showPw ? "text" : "password"} placeholder="Enter your password"
+                    value={password} onChange={(e) => setPassword(e.target.value)}
+                    required className="ag-input ag-input-pw" />
+                  <button type="button" onClick={() => setShowPw(!showPw)}
                     className="absolute right-3 top-1/2 -translate-y-1/2"
-                    style={{ color: "#9ca3af", background: "none", border: "none", cursor: "pointer", display: "flex" }}
-                  >
+                    style={{ color: "#9ca3af", background: "none", border: "none", cursor: "pointer", display: "flex" }}>
                     <EyeIcon open={showPw} />
                   </button>
                 </div>
@@ -198,31 +214,22 @@ export default function Login() {
               {/* Remember / Forgot */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 cursor-pointer text-sm" style={{ color: "#6b7280" }}>
-                  <input
-                    type="checkbox"
-                    checked={remember}
+                  <input type="checkbox" checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
-                    className="w-4 h-4 rounded"
-                    style={{ accentColor: "#1e6b45" }}
-                  />
+                    className="w-4 h-4 rounded" style={{ accentColor: "#1e6b45" }} />
                   Remember me
                 </label>
-                <button
-                  type="button"
-                  className="text-sm font-semibold hover:underline"
-                  style={{ color: "#e08c2a", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}
-                >
+                <button type="button" className="text-sm font-semibold hover:underline"
+                  style={{ color: "#e08c2a", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
                   Forgot password?
                 </button>
               </div>
 
               {/* Submit */}
-              <button
-                type="submit"
-                className="w-full py-3.5 rounded-xl text-white text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 active:scale-[0.99] cursor-pointer"
-                style={{ background: "#1e6b45", fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Sign In
+              <button type="submit" disabled={loading}
+                className="w-full py-3.5 rounded-xl text-white text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
+                style={{ background: "#1e6b45", fontFamily: "'DM Sans', sans-serif", opacity: loading ? 0.75 : 1 }}>
+                {loading ? <><span className="spinner" /> Signing in…</> : "Sign In"}
               </button>
             </form>
 
@@ -240,7 +247,6 @@ export default function Login() {
               </Link>
             </p>
 
-            {/* Trust badges */}
             <div className="flex justify-center gap-5 mt-6 pt-5" style={{ borderTop: "1px solid #e0dbd0" }}>
               {[
                 { icon: "🔒", label: "Secure Login" },
@@ -248,8 +254,7 @@ export default function Login() {
                 { icon: "🌍", label: "Nigeria-Optimised" },
               ].map((t) => (
                 <div key={t.label} className="flex items-center gap-1.5 text-xs" style={{ color: "#6b7280" }}>
-                  <span>{t.icon}</span>
-                  <span>{t.label}</span>
+                  <span>{t.icon}</span><span>{t.label}</span>
                 </div>
               ))}
             </div>
