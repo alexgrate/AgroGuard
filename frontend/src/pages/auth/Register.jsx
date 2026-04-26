@@ -82,6 +82,9 @@ export default function Register() {
       // Save JWT tokens returned by the backend
       saveTokens(data.tokens);
 
+      // Store user's first name for a personalized experience
+      localStorage.setItem("first_name", data.user.first_name);
+
       // Send user to location setup next
       navigate("/location-setup");
     } catch (err) {

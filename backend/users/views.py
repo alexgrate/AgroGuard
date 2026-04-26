@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegisterSerializer, LoginSerializer
 
+
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     return {
@@ -19,7 +20,15 @@ class RegisterView(APIView):
             user   = serializer.save()
             tokens = get_tokens_for_user(user)
             return Response(
-                {'message': 'Account created successfully.', 'tokens': tokens},
+                {
+                    'message': 'Account created successfully.',
+                    'tokens': tokens,
+                    'user': {
+                        'first_name': user.first_name,
+                        'last_name':  user.last_name,
+                        'email':      user.email,
+                    },
+                },
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -32,7 +41,15 @@ class LoginView(APIView):
             user   = serializer.validated_data['user']
             tokens = get_tokens_for_user(user)
             return Response(
-                {'message': 'Login successful.', 'tokens': tokens},
+                {
+                    'message': 'Login successful.',
+                    'tokens': tokens,
+                    'user': {
+                        'first_name': user.first_name,
+                        'last_name':  user.last_name,
+                        'email':      user.email,
+                    },
+                },
                 status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
