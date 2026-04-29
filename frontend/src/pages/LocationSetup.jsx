@@ -187,7 +187,7 @@ export default function LocationSetup() {
       // Non-blocking — still proceed even if save fails
     }
     setSaving(false);
-    navigate("/dashboard");
+    navigate("/loading");
   }
 
   const isLoading = stage === "detecting" || stage === "geocoding";

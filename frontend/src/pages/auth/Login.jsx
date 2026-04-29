@@ -41,8 +41,11 @@ export default function Login() {
       // Save JWT tokens
       saveTokens(data.tokens);
 
+      // Store user info in localStorage
+      localStorage.setItem("first_name", data.user?.first_name || "Farmer");
+
       // Go straight to dashboard on login (location already set from registration)
-      navigate("/dashboard");
+      navigate("/loading");
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
