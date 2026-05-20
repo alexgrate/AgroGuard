@@ -1,105 +1,142 @@
-def main_menu():
+def language_menu():
     return (
-        "CON Welcome to AgroGuard NG 🌱\n"
-        "Climate-Smart Farming Assistant\n"
-        "1. Register My Farm\n"
-        "2. Get Today's Advice\n"
-        "3. Report Weather\n"
-        "4. Pest Alert"
+        "CON Welcome to AgroGuard AI 🌱\n"
+        "Select Language / Zaɓi Harshe:\n"
+        "1. English\n"
+        "2. Pidgin\n"
+        "3. Hausa\n"
+        "4. Yoruba\n"
+        "5. Igbo"
     )
 
-def location_menu():
-    return (
-        "CON Set Farm Location:\n"
-        "1. Use My Current Location (GPS)\n"
-        "2. Enter Location Manually"
-    )
+TRANSLATIONS = {
+    '1': {  # English
+        'main': "Welcome to AgroGuard AI\n1. Register Farm\n2. Get Advice\n3. Report Weather\n4. Pest Alert",
+        'loc': "Set Location:\n1. GPS\n2. Manual",
+        'state': "Select State:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
+        'crop': "Select Crop:\n1. Maize\n2. Cassava\n3. Yam",
+        'soil': "How does your soil behave?\n1. Sandy (Water runs fast)\n2. Loamy (Soft/Black)\n3. Clay (Sticky/Red)\n4. Stony",
+        'stage': "How far has it grown?\n1. Just planted (Day 1-10)\n2. Seedling (Day 10-30)\n3. Vegetative (Day 30-60)\n4. Flowering (Day 60-80)\n5. Grain filling (Day 80-90)\n6. Nearly ready (Day 90+)",
+        'confirm': "Advice for {crop} ({state})\n1. Confirm\n2. Update Info",
+        'sync_main': "AI Calibration - What do you see?\n1. Soil too dry\n2. Soil flooded\n3. Leaves turning yellow\n4. Field looks healthy",
+        'sync_thanks': "Calibration Successful. Our AI has matched your field observation with satellite data. Check Option 2 for updated advice.",
+        'pest_symptom': "What do you see?\n1. Holes in leaves\n2. Insects on stems\n3. Spots on leaves\n4. Stunted growth",
+        'pest_severity': "How bad is it?\n1. Just a few plants\n2. Half the farm\n3. Everywhere",
+        'pest_thanks': "Report received! We are analyzing symptoms. You will get treatment advice via SMS.",
+        'pest_advice': {
+            'armyworm':        "Signs show Fall Armyworm. Advice: Mix small detergent with water and spray plant funnels in the evening.",
+            'stem_borer':      "Signs show Maize Stem Borer. Advice: Apply Neem oil to stems or use 'Push-Pull' with Desmodium plants.",
+            'maize_streak':    "Signs show Maize Streak Virus. Advice: Control bugs with wood ash and use resistant seeds next season.",
+            'cassava_mosaic':  "Signs show Cassava Mosaic Disease. Advice: Uproot and burn affected plants immediately to stop spread.",
+            'cassava_whitefly':"Signs show Cassava Whitefly. Advice: Wash leaves with soapy water and apply Neem oil spray.",
+            'cassava_mealybug':"Signs show Cassava Mealybug. Advice: Introduce natural predator insects and remove affected plant parts immediately.",
+            'yam_beetle':      "Signs show Yam Beetle. Advice: Dust planting holes with organic insecticide powder next season.",
+            'yam_mosaic':      "Signs show Yam Mosaic Virus. Advice: Control aphids (green bugs) and remove weeds around heaps.",
+            'general':         "General Crop Stress. Advice: Monitor daily, ensure watering, and remove weeds.",
+        },
+    },
 
-def manual_location_menu():
-    return (
-        "CON Enter your state:\n"
-        "1. Lagos\n"
-        "2. Kano\n"
-        "3. Oyo\n"
-        "4. Kaduna\n"
-        "5. Rivers"
-    )
+    '2': {  # Pidgin
+        'main': "Welcome to AgroGuard AI\n1. Register Farm\n2. Get Advice\n3. Report Weather\n4. Pest Alert",
+        'loc': "Where farm dey:\n1. Use GPS\n2. Type State",
+        'state': "Pick State:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
+        'crop': "Select Crop:\n1. Maize\n2. Cassava\n3. Yam",
+        'soil': "How your soil be?\n1. Sand-sand (Water dey run)\n2. Black/Soft soil\n3. Strong/Red (Sticky)\n4. Stone-stone",
+        'stage': "How plant look?\n1. Just dey come out (Day 1-10)\n2. E still small (Day 10-30)\n3. E don big, no flower (Day 30-60)\n4. Flower don come (Day 60-80)\n5. Grains don show (Day 80-90)\n6. E don almost ready (Day 90+)",
+        'confirm': "Advice for {crop} for {state}\n1. Correct\n2. Change Info",
+        'sync_main': "Health Check - Wetin you see?\n1. Ground dry too much\n2. Water full ground\n3. Leaves dey yellow\n4. Everything fine",
+        'sync_thanks': "We don update your farm status! AI don match wetin you see with satellite. Check Option 2 for new advice.",
+        'pest_symptom': "Wetin you see for plant?\n1. Hole for leaves\n2. Insects for stem\n3. Marks/Spots\n4. E no grow well",
+        'pest_severity': "How far e reach?\n1. Just small area\n2. Half the farm\n3. Everywhere",
+        'pest_thanks': "We don get your report! AI dey check am now. Advice dey come via SMS.",
+        'pest_advice': {
+            'armyworm':        "AI see say na Fall Armyworm. Advice: Mix small detergent for water, spray inside the leaf for evening time.",
+            'stem_borer':      "AI see say na Stem Borer. Advice: Use Neem oil for the stem or plant Desmodium for the side.",
+            'maize_streak':    "AI see say na Maize Streak Virus. Advice: Control bugs with wood ash and use resistant seeds next season.",
+            'cassava_mosaic':  "Na Cassava Mosaic Disease. Advice: Pull the plant commot, burn am sharp-sharp make e no catch others.",
+            'cassava_whitefly':"Na Cassava Whitefly. Advice: Wash the leaves with soap water and try Neem oil spray.",
+            'cassava_mealybug':"Na Cassava Mealybug. Advice: Use natural predator insects and remove the affected parts sharp-sharp.",
+            'yam_beetle':      "Na Yam Beetle. Advice: Dust planting holes with organic insecticide powder next season.",
+            'yam_mosaic':      "Na Yam Mosaic Virus. Advice: Kill those small green bugs and clean the weeds for the farm.",
+            'general':         "Your plant just dey stress. Advice: Give am water, and clean the weeds well-well.",
+        },
+    },
 
-def crop_menu():
-    return (
-        "CON Select your crop:\n"
-        "1. Maize\n"
-        "2. Cassava\n"
-        "3. Yam\n"
-        "4. Tomato\n"
-        "5. Rice"
-    )
+    '3': {  # Hausa
+        'main': "Barka da zuwa AgroGuard AI\n1. Yi Rajista\n2. Samun Shawara\n3. Rahoton Yanayi\n4. Gargadi kan Kwari",
+        'loc': "Wurin Gona:\n1. GPS\n2. Da kanka",
+        'state': "Zaɓi Jiha:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
+        'crop': "Zaɓi amfanin gona:\n1. Masara\n2. Rogo\n3. Doya",
+        'soil': "Yadda ƙasarku take:\n1. Yashi (Ruwa na gudu)\n2. Laushi/Baki (Taushi)\n3. Yumɓu (Manne/Ja)\n4. Dutse",
+        'stage': "Matakin girma:\n1. Shuka (Kwana 1-10)\n2. Tsiro (Kwana 10-30)\n3. Girma (Kwana 30-60)\n4. Fure (Kwana 60-80)\n5. Cika hatsi (Kwana 80-90)\n6. Kusa da girbi (Kwana 90+)",
+        'confirm': "Shawara ga {crop} a {state}\n1. Tabbatar\n2. Canja Bayani",
+        'sync_main': "Duba Lafiyar Gona - Menene kake gani?\n1. Ƙasa ta bushe sosai\n2. Ruwa ya cika ƙasa\n3. Ganye na zama rawaya\n4. Komai yana da kyau",
+        'sync_thanks': "An sabunta matsayin gonarku! AI ya daidaita abin da kuka gani da bayanin tauraron ɗan adam. Duba Zaɓi 2 don sabon shawara.",
+        'pest_symptom': "Me kuke gani?\n1. Ramukan ganye\n2. Kwari akan mai tushe\n3. Tabo akan ganye\n4. Rashin girma",
+        'pest_severity': "Yaya sharri?\n1. Tsire-tsire kaɗan kawai\n2. Rabin gona\n3. Ko'ina",
+        'pest_thanks': "An samu rahoton! Muna nazarin alamomi. Za ku sami shawarar magani ta SMS.",
+        'pest_advice': {
+            'armyworm':        "Alamun suna nuna Fall Armyworm. Shawara: Haɗa ƙaramin wanka da ruwa a fesa mazuƙan shuka da yamma.",
+            'stem_borer':      "Alamu sun nuna Maize Stem Borer. Shawara: A shafa man Neem zuwa mai tushe ko amfani da 'Push-Pull' tare da Desmodium.",
+            'maize_streak':    "Alamu sun nuna Maize Streak Virus. Shawara: Sarrafa kwari tare da tokar itace kuma amfani da tsaba masu juriya a kakar gaba.",
+            'cassava_mosaic':  "Alamu suna nuna Cutar Mosaic Cassava. Nasiha: A tsige tsiron da abin ya shafa a kona su nan da nan don daina yaɗuwa.",
+            'cassava_whitefly':"Alamu suna nuna Cassava Whitefly. Shawara: Wanke ganye da ruwan sabulu kuma gwada feshin man Neem.",
+            'cassava_mealybug':"Alamu suna nuna Cassava Mealybug. Shawara: Yi amfani da kwari masu cin kwari na halitta kuma cire sassan da abin ya shafa.",
+            'yam_beetle':      "Alamu sun nuna Yam Beetle. Shawara: Ramukan dasa kura tare da foda na maganin kwari a kakar gaba.",
+            'yam_mosaic':      "Alamu sun nuna Yam Mosaic Virus. Shawara: Sarrafa aphids (kore kwari) da kuma cire ciyawa a kusa da tsibi.",
+            'general':         "Matsalolin amfanin gona na gaba ɗaya. Shawara: Kula da yau da kullun, tabbatar da shayarwa, da cire ciyawa.",
+        },
+    },
 
-def planting_date_menu():
-    return (
-        "CON Enter planting date:\n"
-        "Format: DD/MM e.g. 15/04"
-    )
+    '4': {  # Yoruba 
+        'main': "Kaabo si AgroGuard AI\n1. Forukọsilẹ Oko\n2. Gba Imọran\n3. Jabo Oju Ojo\n4. Itaniji Ajenirun",
+        'loc': "Ipo Oko:\n1. GPS\n2. Ara ẹni",
+        'state': "Yan Ipinlẹ:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
+        'crop': "Yan Irugbin:\n1. Agbado\n2. Ege\n3. Isu",
+        'soil': "Bawo ni ilẹ rẹ ṣe ri?\n1. Iyanrin (Omi n sa)\n2. Asọ/Dudu (Rọ)\n3. Amọ (Alalepo/Pupa)\n4. Apata",
+        'stage': "Ipele Idagbasoke:\n1. Ṣẹṣẹ gbin (Ọjọ 1-10)\n2. Eso kekere (Ọjọ 10-30)\n3. Ndagba (Ọjọ 30-60)\n4. Aladodo (Ọjọ 60-80)\n5. Eso nkun (Ọjọ 80-90)\n6. Fẹrẹ pari (Ọjọ 90+)",
+        'confirm': "Imọran fun {crop} ni {state}\n1. Jẹrisi\n2. Yi Alaye pada",
+        'sync_main': "Ayẹwo Ilera - Kini o ri?\n1. Ilẹ gbigbẹ pupọ\n2. Omi kún ilẹ\n3. Ewe n yipada si ofeefee\n4. Ohun gbogbo dara",
+        'sync_thanks': "A ti ṣe imudojuiwọn ipo oko rẹ! AI ti baramu ohun ti o rii pẹlu data satẹlaiti. Ṣayẹwo Aṣayan 2 fun imọran tuntun.",
+        'pest_symptom': "Kini o ri?\n1. Ihò ninu ewe\n2. Kokoro lori igi\n3. Aami lori ewe\n4. Ko dagba daradara",
+        'pest_severity': "Bii o ṣe buruju?\n1. Awọn irugbin diẹ nikan\n2. Idaji oko\n3. Nibikibi",
+        'pest_thanks': "Ìjábọ̀ ti gba! A n ṣe itupalẹ awọn ami. Iwọ yoo gba imọran itọju nipasẹ SMS.",
+        'pest_advice': {
+            'armyworm':        "Awọn ami fihan Fall Armyworm. Imọran: Dapọ ọṣẹ kekere pẹlu omi ki o fọ awọn iṣan ewe ni irọlẹ.",
+            'stem_borer':      "Awọn ami fihan Maize Stem Borer. Imọran: Fi epo Neem si awọn igi tabi lo 'Push-Pull' pẹlu Desmodium.",
+            'maize_streak':    "Awọn ami fihan Maize Streak Virus. Imọran: Ṣakoso awọn kokoro pẹlu eéru igi ki o lo awọn irugbin sooro akoko to n bọ.",
+            'cassava_mosaic':  "Awọn ami fihan Cassava Mosaic Disease. Imọran: Fa awọn irugbin ti o kan jade ki o sun wọn lẹsẹkẹsẹ.",
+            'cassava_whitefly':"Awọn ami fihan Cassava Whitefly. Imọran: Fọ ewe pẹlu omi ọṣẹ ki o gbiyanju fọfọ epo Neem.",
+            'cassava_mealybug':"Awọn ami fihan Cassava Mealybug. Imọran: Lo awọn kokoro apanirun ti ara ati yọ awọn ẹya ti o kan.",
+            'yam_beetle':      "Awọn ami fihan Yam Beetle. Imọran: Tú ihò gbingbin pẹlu lulú iparun kokoro akoko to n bọ.",
+            'yam_mosaic':      "Awọn ami fihan Yam Mosaic Virus. Imọran: Ṣakoso aphids (kokoro alawọ) ki o yọ awọn èpo kuro.",
+            'general':         "Wahala irugbin gbogbogbo. Imọran: Ṣe abojuto lojoojumọ, rii daju irigeshọnu, ki o yọ èpo kuro.",
+        },
+    },
 
-def growth_stage_menu():
-    return (
-        "CON Current growth stage\n"
-        "1. Seedling\n"
-        "2. Vegetative\n"
-        "3. Flowering\n"
-        "4. Ready to Harvest"
-    )
-
-def soil_type_menu():
-    return (
-        "CON Select soil type:\n"
-        "(Auto-detected from your location)\n"
-        "1. Sandy\n"
-        "2. Loamy\n"
-        "3. Clay\n"
-        "4. Not Sure"
-    )
-
-def soil_condition_menu():
-    return (
-        "CON Soil condition today:\n"
-        "1. Dry\n"
-        "2. Moist\n"
-        "3. Wet / Flooded"
-    )
-
-def irrigation_menu():
-    return (
-        "CON Irrigation method used:\n"
-        "1. Rain-fed only\n"
-        "2. Manual watering\n"
-        "3. Drip irrigation\n"
-        "4. None yet"
-    )
-
-def pest_report_menu():
-    return (
-        "CON Any pest attacks seen?\n"
-        "1. Yes - describe\n"
-        "2. No pests seen\n"
-        "3. Not sure / Need help"
-    )
-
-def pest_type_menu():
-    return (
-        "CON Select pest type:\n"
-        "1. Fall Armyworm\n"
-        "2. Locusts\n"
-        "3. Aphids\n"
-        "4. Stem Borers\n"
-        "5. Other"
-    )
-
-def weather_report_menu():
-    return (
-        "CON Weather observation today:\n"
-        "1. Very Hot (above 35°C)\n"
-        "2. Normal\n"
-        "3. Raining\n"
-        "4. Heavy Rain / Flooding"
-    )
+    '5': {  # Igbo 
+        'main': "Nnọọ na AgroGuard AI\n1. Debanye Aha Ugbo\n2. Nweta Ndụmọdụ\n3. Kọọ Ihu Igwe\n4. Ọchịchọ Ọrịa Ahụhụ",
+        'loc': "Ọnọdụ Ugbo:\n1. GPS\n2. Aka onwe",
+        'state': "Họrọ Steeti:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
+        'crop': "Họrọ Ihe a kụrụ:\n1. Ọka\n2. Akpu\n3. Ji",
+        'soil': "Kedụ ka ala gị si dị?\n1. Aja (Mmiri na-agba ọsọ)\n2. Nkọcha/Ojii (Dị nro)\n3. Aja eluigwe (Nọ n'ọnụ/Ọbara ọbara)\n4. Nkume",
+        'stage': "Ọkwa uto:\n1. Emepụtara ọhụrụ (Ụbọchị 1-10)\n2. Obere ọhụrụ (Ụbọchị 10-30)\n3. Na-eto eto (Ụbọchị 30-60)\n4. Na-eghu oge ọka (Ụbọchị 60-80)\n5. Ọka na-ejupụta (Ụbọchị 80-90)\n6. Fọrọ nke nta (Ụbọchị 90+)",
+        'confirm': "Ndụmọdụ maka {crop} na {state}\n1. Kwenye\n2. Gbanwee Ozi",
+        'sync_main': "Nlele Ahụike - Gịnị i hụ?\n1. Ala kpọrọ nkụ\n2. Mmiri jupụtara ala\n3. Akwụkwọ na-aghọ odo odo\n4. Ihe niile dị mma",
+        'sync_thanks': "Anyị emelitela ọnọdụ ugbo gị! AI etoliteere ihe i hụ na data satẹlaịtị. Lelee Nhọrọ 2 maka ndụmọdụ ọhụrụ.",
+        'pest_symptom': "Gịnị i hụ?\n1. Oghere n'ime akwụkwọ\n2. Ahụhụ n'ọkpọ osisi\n3. Akara n'akwụkwọ\n4. Anaghị eto nke ọma",
+        'pest_severity': "Ọ dị njọ etu ole?\n1. Obere ọha osisi naanị\n2. Ọkara ugbo\n3. N'ebe niile",
+        'pest_thanks': "Anyị natara akụkọ gị! Anyị na-enyocha ihe ọkọwa. Ị ga-enweta ndụmọdụ ọgwụgwọ site na SMS.",
+        'pest_advice': {
+            'armyworm':        "Ihe ọkọwa gosipụtara Fall Armyworm. Ndụmọdụ: Tụnye obere ncha na mmiri wee mee spray n'ime olulu akwụkwọ n'anyasị.",
+            'stem_borer':      "Ihe ọkọwa gosipụtara Maize Stem Borer. Ndụmọdụ: Tinye mmanụ Neem n'ọkpọ osisi ma ọ bụ jiri 'Push-Pull' na Desmodium.",
+            'maize_streak':    "Ihe ọkọwa gosipụtara Maize Streak Virus. Ndụmọdụ: Chịkwaa ahụhụ site na nzu ọkụ wee jiri mkpụrụ osisi na-eguzogide na oge ọhụrụ.",
+            'cassava_mosaic':  "Ihe ọkọwa gosipụtara Cassava Mosaic Disease. Ndụmọdụ: Wepụ osisi ndị a metụtara ma ọkụ ha ozugbo ka mgbasa ọrịa kwụsị.",
+            'cassava_whitefly':"Ihe ọkọwa gosipụtara Cassava Whitefly. Ndụmọdụ: Sahara akwụkwọ na mmiri ncha ma gbalịa mmanụ Neem.",
+            'cassava_mealybug':"Ihe ọkọwa gosipụtara Cassava Mealybug. Ndụmọdụ: Jiri ahụhụ ndị na-egbu ndị ọzọ ma wepụ akụkụ ndị a metụtara.",
+            'yam_beetle':      "Ihe ọkọwa gosipụtara Yam Beetle. Ndụmọdụ: Wụnye oghere ịkụ ọrụ na ọgwụ ahụhụ n'oge ọhụrụ.",
+            'yam_mosaic':      "Ihe ọkọwa gosipụtara Yam Mosaic Virus. Ndụmọdụ: Chịkwaa aphids (ahụhụ ndụ) wee wepụ igbo n'ókpù.",
+            'general':         "Nsogbu ihe a kụrụ n'ozuzu. Ndụmọdụ: Lelee kwa ụbọchị, hụ na ịkpasa mmiri dị mma, ma wepụ ahịhịa ọhịa.",
+        },
+    },
+}
