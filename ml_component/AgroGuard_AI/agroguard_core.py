@@ -1,12 +1,18 @@
-# agroguard_core.py
-
 import pandas as pd
 import numpy as np
 import joblib
 import json
 import requests
 from datetime import datetime, timedelta
-from app.translation import translate_recommendation
+import os
+
+try:
+    from AgroGuard_AI.app.translation import translate_recommendation
+except ModuleNotFoundError:
+    from app.translation import translate_recommendation
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 CROP_PARAMS = {
     'Maize': {'base_temp': 10, 'maturity_gdd': 1350},
@@ -36,14 +42,19 @@ GROWTH_STAGES = {
     'Nearly ready (Day 90+)': 0.95
 }
 
+
+
 #Load Model 
 def load_model(
     model_path='models/rf_climate_risk_model.pkl',
     features_path='models/feature_names.json'
 ):
-    """Load the trained Random Forest model and feature names."""
-    model = joblib.load(model_path)
-    with open(features_path, 'r') as f:
+    """Load the trained Random Forest model and feature names using absolute paths.."""
+    abs_model_path = os.path.join(BASE_DIR, model_path)
+    abs_features_path = os.path.join(BASE_DIR, features_path)
+
+    model = joblib.load(abs_model_path)
+    with open(abs_features_path, 'r') as f:
         features = json.load(f)
     return model, features
 
@@ -308,10 +319,21 @@ def run_agroguard(crop_type, state, growth_stage, language, api_key):
     # Step 7 — Generate alerts
     alerts = generate_alerts(risk_df, language)
 
+    short_forecast = ""
+    
+    for i in range(min(3, len(risk_df))):
+        day_data = risk_df.iloc[i]
+        date_str = day_data['date'].strftime('%a')
+        temp = round(day_data['temp_max'])
+        rain = "Rain" if day_data['rainfall'] > 2 else "Dry"
+        short_forecast += f"{date_str}: {temp}C/{rain}. "
+
     # Step 8 — Return clean dictionary to frontend
     return {
         'crop': crop_type,
         'state': state,
+        'risk_category': str(risk_df['risk_category'].iloc[0]),
+        'risk_score': float(risk_df['risk_score'].iloc[0]),
         'days_to_maturity': days_remaining,
         'maturity_date': (
             datetime.now() + timedelta(days=days_remaining)
@@ -328,5 +350,7 @@ def run_agroguard(crop_type, state, growth_stage, language, api_key):
             'rainfall', 'humidity',
             'risk_category', 'risk_score'
         ]].to_dict(orient='records'),
-        'language': language
+        'language': language,
+        'short_forecast' : short_forecast.strip(),
+        'check_back_days': 3
     }

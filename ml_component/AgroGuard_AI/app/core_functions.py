@@ -59,16 +59,12 @@ def get_forecast_weather(lat, lon, api_key):
             item['wind']['speed']
         )
 
-        #rainfall is optional in the API response
-        if "rain" in item:
-            daily_data[date]['rainfall_readings'].append(
-                item['rain'].get('3h', 0)
-            )
-        else:
-            daily_data[date]['rainfall_readings'].append(0)
-        
+        daily_data[date]['rainfall_readings'].append(
+            item.get("rain", {}).get("3h", 0)
+        )
+
         #aggregate daily averages
-        rows = []
+    rows = []
     for date, values in daily_data.items():
         rows.append({
             'date': pd.to_datetime(date),
