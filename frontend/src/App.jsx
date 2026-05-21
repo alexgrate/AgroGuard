@@ -11,10 +11,10 @@ import LocationSetup from './pages/LocationSetup'
 // Dashboard
 import DashboardLoader from './pages/dashboard/DashboardLoader'
 import DashboardLayout from './pages/dashboard/DashboardLayout'
-import FarmersPulse from './pages/dashboard/FarmersPulse'
-import MyFarm from './pages/dashboard/MyFarm'
+import FarmersPulse    from './pages/dashboard/FarmersPulse'
+import MyFarm          from './pages/dashboard/MyFarm'
+import CropIntelligence from './pages/dashboard/CropIntelligence'
 
-// Placeholder for unbuilt pages
 function ComingSoon({ title }) {
   return (
     <div style={{
@@ -45,15 +45,15 @@ const App = () => {
         {/* Onboarding */}
         <Route path="/location-setup" element={<LocationSetup />} />
 
-        {/* Dashboard loading screen */}
+        {/* Loading screen */}
         <Route path="/loading" element={<DashboardLoader />} />
 
-        {/* Dashboard — nested routes inside the layout */}
+        {/* Dashboard nested routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<FarmersPulse />} />
-          <Route path="farm" element={<MyFarm />} />
-          <Route path="crops" element={<ComingSoon title="Crop Intelligence" />} />
-          <Route path="alerts" element={<ComingSoon title="Climate Alerts" />} />
+          <Route index          element={<FarmersPulse />} />
+          <Route path="farm"    element={<MyFarm />} />
+          <Route path="crops"   element={<CropIntelligence />} />
+          <Route path="alerts"  element={<ComingSoon title="Climate Alerts" />} />
         </Route>
 
         {/* Catch-all */}
