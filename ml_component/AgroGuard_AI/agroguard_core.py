@@ -42,6 +42,12 @@ GROWTH_STAGES = {
     'Nearly ready (Day 90+)': 0.95
 }
 
+SOIL_RISK_MODIFIERS = {
+    'Sandy':  {'drought_boost': 1.25, 'flood_boost': 0.85, 'label': 'fast-draining'},
+    'Loamy':  {'drought_boost': 1.00, 'flood_boost': 1.00, 'label': 'balanced'},
+    'Clay':   {'drought_boost': 0.85, 'flood_boost': 1.30, 'label': 'water-retaining'},
+    'Stony':  {'drought_boost': 1.15, 'flood_boost': 1.10, 'label': 'poor-retention'},
+}
 
 
 #Load Model 
@@ -229,24 +235,32 @@ def get_harvest_recommendation(days_remaining, risk_forecast_df):
 
 
 #Generate Alerts
-def generate_alerts(risk_forecast_df, language):
+def generate_alerts(risk_forecast_df, language, soil_type='Loamy'):
     """
     Scan the forecast for climate hazards and return
     a list of translated alert messages.
+    Soil type adjusts rainfall thresholds — sandy soil triggers
+    drought alerts sooner, clay soil triggers flood alerts sooner.
     """
     alerts = []
     max_temp = risk_forecast_df['temp_max'].max()
     total_rain = risk_forecast_df['rainfall'].sum()
 
+    soil = SOIL_RISK_MODIFIERS.get(soil_type, SOIL_RISK_MODIFIERS['Loamy'])
+
+    # Soil-adjusted thresholds
+    drought_threshold = 5 / soil['drought_boost']   # Sandy → triggers at ~4mm
+    flood_threshold   = 80 / soil['flood_boost']     # Clay  → triggers at ~62mm
+
     if max_temp > 36:
         alerts.append(translate_recommendation(
             'heat_alert', language, temp=round(max_temp, 1)
         ))
-    if total_rain < 5:
+    if total_rain < drought_threshold:
         alerts.append(translate_recommendation(
             'drought_alert', language
         ))
-    elif total_rain > 80:
+    elif total_rain > flood_threshold:
         alerts.append(translate_recommendation(
             'flood_alert', language
         ))
@@ -259,7 +273,7 @@ def generate_alerts(risk_forecast_df, language):
 
 
 #Main Function
-def run_agroguard(crop_type, state, growth_stage, language, api_key):
+def run_agroguard(crop_type, state, growth_stage, language, api_key, soil_type='Loamy'):
     """
     MAIN FUNCTION — this is what teammates call from the frontend.
 
@@ -269,6 +283,7 @@ def run_agroguard(crop_type, state, growth_stage, language, api_key):
     - growth_stage: any key from GROWTH_STAGES
     - language:     'english', 'pidgin', 'hausa', 'yoruba', 'igbo'
     - api_key:      OpenWeatherMap API key
+    - soil_type:    'Sandy', 'Loamy', 'Clay', or 'Stony'
 
     Returns a dictionary with everything the frontend needs.
     """
@@ -285,6 +300,22 @@ def run_agroguard(crop_type, state, growth_stage, language, api_key):
 
     if risk_df is None:
         return {'error': 'Unable to fetch weather data. Please try again.'}
+
+    # Step 5b — Adjust risk scores based on soil type
+    soil = SOIL_RISK_MODIFIERS.get(soil_type, SOIL_RISK_MODIFIERS['Loamy'])
+    total_rain = risk_df['rainfall'].sum()
+    if total_rain < 10:
+        risk_df['risk_score'] = (risk_df['risk_score'] * soil['drought_boost']).clip(0, 100).round(1)
+    elif total_rain > 50:
+        risk_df['risk_score'] = (risk_df['risk_score'] * soil['flood_boost']).clip(0, 100).round(1)
+
+    # Recalculate risk category after soil adjustment
+    risk_df['risk_category'] = risk_df['risk_score'].apply(
+        lambda s: 'High Risk' if s >= 60 else ('Moderate Risk' if s >= 30 else 'Low Risk')
+    )
+    risk_df['risk_label'] = risk_df['risk_category'].map({
+        'Low Risk': 0, 'Moderate Risk': 1, 'High Risk': 2
+    })
 
     # Step 6 — Find harvest window
     window_start, window_end = get_harvest_recommendation(
@@ -317,7 +348,7 @@ def run_agroguard(crop_type, state, growth_stage, language, api_key):
         )
 
     # Step 7 — Generate alerts
-    alerts = generate_alerts(risk_df, language)
+    alerts = generate_alerts(risk_df, language, soil_type)
 
     short_forecast = ""
     
@@ -332,6 +363,7 @@ def run_agroguard(crop_type, state, growth_stage, language, api_key):
     return {
         'crop': crop_type,
         'state': state,
+        'soil_type': soil_type,
         'risk_category': str(risk_df['risk_category'].iloc[0]),
         'risk_score': float(risk_df['risk_score'].iloc[0]),
         'days_to_maturity': days_remaining,

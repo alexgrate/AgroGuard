@@ -233,7 +233,7 @@ def send_high_risk_warning(phone_number, state, crop_type, language, risk_score,
     return alert
 
 
-def get_ai_recommendation(crop_type, state, growth_stage, language, phone_number):
+def get_ai_recommendation(crop_type, state, growth_stage, language, phone_number, soil_type='Loamy'):
     try:
         result = run_agroguard(
             crop_type=crop_type,
@@ -241,6 +241,7 @@ def get_ai_recommendation(crop_type, state, growth_stage, language, phone_number
             growth_stage=growth_stage,
             language=language,
             api_key=settings.OPENWEATHER_API_KEY,
+            soil_type=soil_type,
         )
 
         if 'error' in result:
@@ -321,7 +322,8 @@ def send_sms(phone_number, message):
     print(message)
     print("=" * 50 + "\n")
 
-    if getattr(settings, 'AT_DEMO_MODE', False):
+    demo_mode = getattr(settings, 'AT_DEMO_MODE', False)
+    if demo_mode is True or str(demo_mode).lower() in ('true', '1'):
         print("[DEMO MODE] SMS logged above. Not dispatched.")
         return None
 
@@ -365,6 +367,7 @@ def build_and_send(
         state        = existing_farm.state
         growth_stage = existing_farm.growth_stage
         language     = existing_farm.language
+        soil         = existing_farm.soil_type or 'Loamy'
     else:
         language     = LANGUAGE_MAP.get(language_choice, 'pidgin')
         crop         = CROP_MAP.get(crop_choice, 'Maize')
@@ -387,6 +390,6 @@ def build_and_send(
             },
         )
 
-    message = get_ai_recommendation(crop, state, growth_stage, language, phone_number)
+    message = get_ai_recommendation(crop, state, growth_stage, language, phone_number, soil_type=soil)
     send_sms(phone_number, message)
     return "END Advice sent via SMS!"

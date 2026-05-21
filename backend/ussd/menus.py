@@ -1,6 +1,6 @@
 def language_menu():
     return (
-        "CON Welcome to AgroGuard AI 🌱\n"
+        "CON Welcome to AgroGuard AI\n"
         "Select Language / Zaɓi Harshe:\n"
         "1. English\n"
         "2. Pidgin\n"
