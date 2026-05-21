@@ -11,7 +11,7 @@ def language_menu():
 
 TRANSLATIONS = {
     '1': {  # English
-        'main': "Welcome to AgroGuard AI\n1. Register Farm\n2. Get Advice\n3. Report Weather\n4. Pest Alert",
+        'main': "Welcome to AgroGuard AI\n1. Register Farm\n2. Get Advice\n3. Farm Health Check\n4. Pest Alert",
         'loc': "Set Location:\n1. GPS\n2. Manual",
         'state': "Select State:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
         'crop': "Select Crop:\n1. Maize\n2. Cassava\n3. Yam",
@@ -37,7 +37,7 @@ TRANSLATIONS = {
     },
 
     '2': {  # Pidgin
-        'main': "Welcome to AgroGuard AI\n1. Register Farm\n2. Get Advice\n3. Report Weather\n4. Pest Alert",
+        'main': "Welcome to AgroGuard AI\n1. Register Farm\n2. Get Advice\n3. Check Farm Health\n4. Pest Alert",
         'loc': "Where farm dey:\n1. Use GPS\n2. Type State",
         'state': "Pick State:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
         'crop': "Select Crop:\n1. Maize\n2. Cassava\n3. Yam",
@@ -63,7 +63,7 @@ TRANSLATIONS = {
     },
 
     '3': {  # Hausa
-        'main': "Barka da zuwa AgroGuard AI\n1. Yi Rajista\n2. Samun Shawara\n3. Rahoton Yanayi\n4. Gargadi kan Kwari",
+        'main': "Barka da zuwa AgroGuard AI\n1. Yi Rajista\n2. Samun Shawara\n3. Duba Lafiyar Gona\n4. Gargadi kan Kwari",
         'loc': "Wurin Gona:\n1. GPS\n2. Da kanka",
         'state': "Zaɓi Jiha:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
         'crop': "Zaɓi amfanin gona:\n1. Masara\n2. Rogo\n3. Doya",
@@ -89,7 +89,7 @@ TRANSLATIONS = {
     },
 
     '4': {  # Yoruba 
-        'main': "Kaabo si AgroGuard AI\n1. Forukọsilẹ Oko\n2. Gba Imọran\n3. Jabo Oju Ojo\n4. Itaniji Ajenirun",
+        'main': "Kaabo si AgroGuard AI\n1. Forukọsilẹ Oko\n2. Gba Imọran\n3. Ṣayẹwo Ilera Oko\n4. Itaniji Ajenirun",
         'loc': "Ipo Oko:\n1. GPS\n2. Ara ẹni",
         'state': "Yan Ipinlẹ:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
         'crop': "Yan Irugbin:\n1. Agbado\n2. Ege\n3. Isu",
@@ -115,7 +115,7 @@ TRANSLATIONS = {
     },
 
     '5': {  # Igbo 
-        'main': "Nnọọ na AgroGuard AI\n1. Debanye Aha Ugbo\n2. Nweta Ndụmọdụ\n3. Kọọ Ihu Igwe\n4. Ọchịchọ Ọrịa Ahụhụ",
+        'main': "Nnọọ na AgroGuard AI\n1. Debanye Aha Ugbo\n2. Nweta Ndụmọdụ\n3. Nlele Ahụike Ugbo\n4. Ọchịchọ Ọrịa Ahụhụ",
         'loc': "Ọnọdụ Ugbo:\n1. GPS\n2. Aka onwe",
         'state': "Họrọ Steeti:\n1. Lagos\n2. Kano\n3. Benue\n4. Kaduna\n5. Ogun\n6. Oyo\n7. Enugu\n8. Niger\n9. Plateau\n10. Cross River",
         'crop': "Họrọ Ihe a kụrụ:\n1. Ọka\n2. Akpu\n3. Ji",

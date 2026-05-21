@@ -60,3 +60,30 @@ class PestReport(models.Model):
 
     def __str__(self):
         return f"{self.detected_pest} alert in {self.state}"
+    
+
+
+class ClimateAlert(models.Model):
+
+    RISK_CHOICES = [
+        ('High Risk', 'High Risk'),
+        ('Moderate Risk', 'Moderate Risk'),
+        ('Low Risk', 'Low Risk'),
+    ]
+
+    phone_number = models.CharField(max_length=20)
+    state = models.CharField(max_length=100)
+    crop_type = models.CharField(max_length=100)
+    risk_level = models.CharField(max_length=50, choices=RISK_CHOICES)
+    risk_score = models.FloatField()
+    forecast = models.TextField()          
+    warning_sent = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Climate Alert Record"
+        verbose_name_plural = "Climate Alert Records"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.risk_level} — {self.crop_type} in {self.state} ({self.created_at.strftime('%Y-%m-%d')})"
